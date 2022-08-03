@@ -62,7 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   return Center(child: Text(availableBiometrics[index].name));
                 }),
               ),
-              /*widgetText(),*/
               TextButton(
                   onPressed: () async {
                     if (!didAuthenticate) {
