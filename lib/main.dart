@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:open_settings/open_settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Bio Metrics Demo'),
     );
   }
 }
@@ -52,16 +53,24 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: Center(
           child: Column(
-
             children: <Widget>[
-              Flexible(
-                child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: availableBiometrics.length,
-                itemBuilder: (context, index) {
-                  return Center(child: Text(availableBiometrics[index].name));
-                }),
-              ),
+              availableBiometrics.isNotEmpty
+                  ? Flexible(
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: availableBiometrics.length,
+                          itemBuilder: (context, index) {
+                            return Center(
+                                child: Text(availableBiometrics[index].name));
+                          }),
+                    )
+                  : TextButton(
+                      child: const Text("No Biometrics Found!"),
+                      onPressed: () {
+                        OpenSettings.openSecuritySetting();
+                        // AppSettings.openLockAndPasswordSettings();
+                      },
+                    ),
               TextButton(
                   onPressed: () async {
                     if (!didAuthenticate) {
@@ -115,29 +124,5 @@ class _MyHomePageState extends State<MyHomePage> {
     availableBiometrics = await auth.getAvailableBiometrics();
 
     setState(() {});
-  }
-
-  Widget widgetText() {
-    for (BiometricType type in availableBiometrics) return Text(type.name);
-
-    /*if (availableBiometrics.isNotEmpty) {
-      for (BiometricType type in availableBiometrics) {
-        if (availableBiometrics.contains(BiometricType.face)) {
-          return const Text('Face Detection');
-        } else if (availableBiometrics.contains(BiometricType.fingerprint)) {
-          return const Text('Fingerprint');
-        } else {
-          return Text(type.name);
-        }
-      }
-    } else {
-      return TextButton(
-        child: const Text("No Biometrics Found!"),
-        onPressed: () {
-          AppSettings.openLockAndPasswordSettings();
-        },
-      );
-    }*/
-    return const Text("No Biometrics Found");
   }
 }
